@@ -17,12 +17,15 @@ func showUsage() {
 
 func main() {
 	//
-	if len(os.Args) < 3 {
+	if len(os.Args) < 2 {
 		showUsage()
 		return
 	}
 	indir := os.Args[1]
-	outfile := os.Args[2]
+	outfile := "out.csv"
+	if len(os.Args) >= 3 {
+		outfile = os.Args[2]
+	}
 	//
 	files, err := filepath.Glob(indir + "/*.*")
 
