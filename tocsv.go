@@ -26,9 +26,7 @@ func main() {
 	if len(os.Args) >= 3 {
 		outfile = os.Args[2]
 	}
-	//
-	files, err := filepath.Glob(indir + "/*.*")
-
+	// open output file
 	fp, err := os.Create(outfile)
 	if err != nil {
 		fmt.Println(err)
@@ -36,14 +34,25 @@ func main() {
 	}
 	defer fp.Close()
 
-	for _, file := range files {
-		ext := filepath.Ext(file)
-		ext = strings.ToLower(ext)
-		if ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif" {
-			// ok
-		} else {
-			continue
+	// file or dir
+	fi, err := os.Stat(indir)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if !fi.IsDir() {
+		s, err := toCSV(indir)
+		if err != nil {
+			fmt.Println(err)
+			return
 		}
+		fp.WriteString(s)
+		fmt.Println("ok.")
+		return
+	}
+
+	files, err := filepath.Glob(indir + "/*.*")
+	for _, file := range files {
 		s, err := toCSV(file)
 		if err != nil {
 			fmt.Println("[error]", file, ":", err)
@@ -51,9 +60,18 @@ func main() {
 		}
 		fp.WriteString(s)
 	}
+	fmt.Println("ok.")
 }
 
 func toCSV(path string) (string, error) {
+	ext := filepath.Ext(path)
+	ext = strings.ToLower(ext)
+	if ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif" {
+		// ok
+	} else {
+		return "", fmt.Errorf("Invalid File Format")
+	}
+
 	reader, err := os.Open(path)
 	if err != nil {
 		return "", err
