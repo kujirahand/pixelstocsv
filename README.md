@@ -7,7 +7,13 @@
 # how to use
 
 ```
-$ pixelstocsv (inputdir) (outcsvfile)
+$ pixelstocsv (inputdir) (outcsvfile) [options]
+```
+
+## options
+
+```
+--resize=(width),(height)
 ```
 
 # how to compile
